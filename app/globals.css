@@ -9,3 +9,7 @@ body {
   visibility: visible !important;
 }
 
+[data-testid="grid-gallery-item_check-button"] {
+  /* tus estilos personalizados aquí */
+  visibility: visible !important;
+}
