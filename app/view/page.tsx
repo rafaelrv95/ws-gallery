@@ -6,16 +6,17 @@ import PhotoGallery from '@/components/PhotoGallery';
 import { useParams } from 'next/navigation';
 export const dynamic = "force-dynamic";
 
-const getSearch = (name: any)=>{
-  if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
-     return decodeURIComponent(name[1]);
+const getSearch = ()=>{
+  let search = window.location.search.substring(1);
+  let searchObj = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
+  return searchObj
 }
 
 export default function View() {
     
 
   const [firstPhotos, setFirstPhotos] = useState<string[]>([]);
-  const pair = { "action": "pair", "viewId": getSearch("viewId") }
+  const pair = { "action": "pair", "viewId": getSearch().viewId }
 
   useEffect(() => {
     const onMessageReceived = (message: string) => {
