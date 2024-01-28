@@ -26,7 +26,7 @@ export default function PhotoGallery(props:{photos: string[]}) {
 
   const [index, setIndex] = useState(-1);
   const handleClick = (index: number) => setIndex(index);
-  const [photosObj, setPhotosObj] = useState<IPhoto[]>(galleryObj(photos));
+  const [photosObj, setPhotosObj] = useState<IPhoto[]>([]);
   const handleSelect = (index: number) => {
     console.log(index, 'selected')
     const nextPhoto = photosObj.map((photo, i) =>
@@ -38,6 +38,19 @@ export default function PhotoGallery(props:{photos: string[]}) {
   const slides = photosObj.map(({ src } ) => ({
     src: src,
   }));
+
+  useEffect(()=>{
+    if(photos.length ==0)return
+    if(photosObj.length == 0){
+      setPhotosObj(galleryObj(photos))
+    }else{
+      let latestPhotos = photos[photos.length - 1]
+      setPhotosObj((prev)=>[...prev,{src: latestPhotos, isSelected: false}])
+     console.log(photosObj, "photoGallery")
+
+    }
+    
+  },[photos])
 
   return (
     <>
