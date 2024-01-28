@@ -7,9 +7,13 @@ import { useParams } from 'next/navigation';
 export const dynamic = "force-dynamic";
 
 const getSearch = ()=>{
-  let search = window.location.search.substring(1);
-  let searchObj = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
-  return searchObj
+  if (typeof window !== "undefined") {
+    // Client-side-only code
+    let search = window.location.search.substring(1);
+    let searchObj = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
+    return searchObj
+  }
+  
 }
 
 export default function View() {
