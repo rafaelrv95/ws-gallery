@@ -20,27 +20,32 @@ export default function View() {
     
 
   const [firstPhotos, setFirstPhotos] = useState<string[]>([]);
-  const pair = { "action": "pair", "viewId": getSearch().viewId }
+  const [id, setId] = useState(undefined)
+  //const pair = { "action": "pair", "viewId": getSearch().viewId }
 
   useEffect(() => {
-    const onMessageReceived = (message: string) => {
-      let arrPhotos = JSON.parse(message)
-      if(arrPhotos.action === "firstPhotos")setFirstPhotos(arrPhotos.photos)
-      if(arrPhotos.action === "newPhoto"){
-        let tmp = firstPhotos
-        tmp.push(arrPhotos.photo)
-        setFirstPhotos(tmp)
-      }
-    };
-    const webSocketUrl = 'wss://4dhzwstr2b.execute-api.us-east-1.amazonaws.com/dev/';
-    //const webSocketUrl = "wss://socketsbay.com/wss/v2/1/demo/"
-    WebSocketConnection.connect(webSocketUrl, pair);
-    WebSocketConnection.addMessageListener(onMessageReceived);
-    return () => {
-      WebSocketConnection.removeMessageListener(onMessageReceived);
-    };
+    if(id != undefined){
+      const onMessageReceived = (message: string) => {
+        let arrPhotos = JSON.parse(message)
+        if(arrPhotos.action === "firstPhotos")setFirstPhotos(arrPhotos.photos)
+        if(arrPhotos.action === "newPhoto"){
+          let tmp = firstPhotos
+          tmp.push(arrPhotos.photo)
+          setFirstPhotos(tmp)
+        }
+      };
+      const webSocketUrl = 'wss://4dhzwstr2b.execute-api.us-east-1.amazonaws.com/dev/';
+      //const webSocketUrl = "wss://socketsbay.com/wss/v2/1/demo/"
+      WebSocketConnection.connect(webSocketUrl, { "action": "pair", "viewId": id });
+      WebSocketConnection.addMessageListener(onMessageReceived);
+      return () => {
+        WebSocketConnection.removeMessageListener(onMessageReceived);
+      };
+    }else{
+      setId(getSearch().viewId)
+    }
     
-  }, []);
+  }, [id]);
 
 
   return (
