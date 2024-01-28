@@ -5,6 +5,7 @@ import { Lightbox } from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { Gallery } from 'react-grid-gallery';
 export const dynamic = "force-dynamic";
+import {useSocket, IContextSocket} from '../contexts/socketContext';
 
 interface IPhoto{
   src: string;
@@ -12,6 +13,7 @@ interface IPhoto{
 }
 
 export default function PhotoGallery(props:{photos: string[]}) {
+  const ws: IContextSocket | null = useSocket();
   const {photos} = props
   const galleryObj= (photos: string[]) => {
     return photos.map(photo => {
@@ -43,14 +45,16 @@ export default function PhotoGallery(props:{photos: string[]}) {
     if(photos.length ==0)return
     if(photosObj.length == 0){
       setPhotosObj(galleryObj(photos))
-    }else{
-      let latestPhotos = photos[photos.length - 1]
-      setPhotosObj((prev)=>[...prev,{src: latestPhotos, isSelected: false}])
-     console.log(photosObj, "photoGallery")
-
     }
     
   },[photos])
+
+  useEffect(()=>{
+    if(ws?.newPhoto != "" && ws?.newPhoto){
+      setPhotosObj((prev)=>[...prev, {src: ws?.newPhoto, isSelected: false}])
+      ws?.clearNewPhoto()
+    }
+  },[ws?.newPhoto])
 
   return (
     <>

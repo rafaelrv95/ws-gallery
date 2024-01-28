@@ -10,6 +10,10 @@ export interface IContextSocket {
     onConnect: (pair: any) => void;
     destroy: () => void;
     firstPhotos: string[];
+    newPhoto: string;
+    clearNewPhoto: () => void;
+    photosToDownload: string[];
+    createDownload: (arg: {}) => void;
 }
 
 const SocketIoContext = createContext<IContextSocket | null>(null);
@@ -22,12 +26,16 @@ export default function ContextSocket(props: any) {
 
     const [socket, setSocket] = useState<any | null>(null);
     const [firstPhotos, setFirstPhotos] = useState<string[]>([]);
+    const [photosToDownload, setPhotosToDownload] = useState<string[]>([]);
+    const [newPhoto, setNewPhoto] = useState<string>("");
     const [pair, setPair] = useState({})
+    const [isOpen, setIsOpen] = useState<boolean | null>(null);
 
     const connect = () => {
         setSocket(null);
         let newSocket = new WebSocket("wss://4dhzwstr2b.execute-api.us-east-1.amazonaws.com/dev/")
         setSocket(newSocket)
+        setIsOpen(null)
     }
 
     useEffect(() => {
@@ -35,24 +43,32 @@ export default function ContextSocket(props: any) {
         return () => {
             socket?.close();
             setSocket(null);
+            setIsOpen(null)
         };
     }, []);
 
     useEffect(() => {
-        if (socket) {
+       
+        if (socket && pair) {
+            socket.onopen = () => {
+                setIsOpen(true)
+                onConnect(pair)
+                socket.send(JSON.stringify(pair));
+            }
             socket.onclose = (event: any) => {
                 console.log('Disconnected from WebSocket server');
                 setTimeout(() => {
-                    connect()
-                    onConnect(pair)
+                    setIsOpen(false)
                 }, 2000);
             };
             socket.onmessage = (event: any) => {
                 let tmp = JSON.parse(event.data)
                 if (tmp.action === "firstPhotos") setFirstPhotos(tmp.photos)
                 if (tmp.action === "newPhoto") {
-                    setFirstPhotos((prev) => [...prev, tmp.photoUrl])
+                    setNewPhoto(tmp.photoUrl)
+                    //setFirstPhotos((prev) => [...prev, tmp.photoUrl])
                 }
+                if(tmp.action === "photosToDownload")setPhotosToDownload(tmp.photos)
 
                 console.log('ReceivedXX:', event.data);
 
@@ -60,15 +76,15 @@ export default function ContextSocket(props: any) {
         }
     }, [socket, pair]);
 
+    useEffect(()=>{
+        if(isOpen != null && isOpen == false){
+            connect()
+        }
+    }, [isOpen])
+
     function onConnect(pair: {}) {
         setPair(pair)
-        if(socket){
-            socket.onopen = () => {
-                socket.send(JSON.stringify(pair));
-            };
-        }
         
-
     }
 
     function destroy() {
@@ -76,13 +92,26 @@ export default function ContextSocket(props: any) {
         setSocket(null);
     }
 
+    function createDownload(download: {}){
+        if(socket){
+            socket.send(download)
+        }
+    }
+
+    const clearNewPhoto =()=>{setNewPhoto("")}
+
+
     return (
         <SocketIoContext.Provider
             value={{
                 socket,
                 onConnect,
                 destroy,
-                firstPhotos
+                firstPhotos,
+                newPhoto,
+                clearNewPhoto,
+                photosToDownload,
+                createDownload
             }}
         >
             {props.children}
