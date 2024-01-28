@@ -12,10 +12,10 @@ const getSearch = (name: any)=>{
 }
 
 export default function View() {
-    const params = useParams<{id: string}>()
+    
 
   const [firstPhotos, setFirstPhotos] = useState<string[]>([]);
-  const pair = { "action": "pair", "viewId": params.id }
+  const pair = { "action": "pair", "viewId": getSearch("viewId") }
 
   useEffect(() => {
     const onMessageReceived = (message: string) => {
