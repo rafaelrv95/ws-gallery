@@ -7,6 +7,7 @@ export interface SimpleDialogProps {
     open: boolean;
     closeDialog: () => void;
 }
+const baseUrl = window.location.origin
 export default function ShowQr(props: SimpleDialogProps) {
     const ws: IContextSocket | null = useSocket();
 
@@ -22,7 +23,7 @@ export default function ShowQr(props: SimpleDialogProps) {
                         <div>
                             <p>{ws?.getDownloadId}</p>
                             <Canvas
-                                text={`www.google.com/?downloadId=${ws?.getDownloadId}`}
+                                text={`${baseUrl}/download?downloadId=${ws?.getDownloadId}`}
                                 options={{
                                     errorCorrectionLevel: 'M',
                                     margin: 3,
