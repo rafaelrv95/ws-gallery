@@ -4,6 +4,7 @@ import {
     useState,
     useContext,
 } from "react";
+import { getSearch } from "@/utils/queryParams";
 
 export interface IContextSocket {
     socket: any;
@@ -87,7 +88,7 @@ export default function ContextSocket(props: any) {
             };
             pingpong = setInterval(() => {
                 console.log("send ping")
-                socket.send(JSON.stringify({"action": "ping", "viewId": "abcd1234"}));
+                socket.send(JSON.stringify({"action": "ping", "viewId": getSearch().viewId}));
             }, 10000);
 
         }

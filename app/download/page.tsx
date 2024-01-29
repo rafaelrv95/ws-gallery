@@ -2,16 +2,7 @@
 import { useEffect, useState } from 'react';
 import {useSocket, IContextSocket} from '../../contexts/socketContext';
 import PhotoGallery from '@/components/PhotoGallery';
-
-const getSearch = ()=>{
-  if (typeof window !== "undefined") {
-    // Client-side-only code
-    let search = window.location.search.substring(1);
-    let searchObj = JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}', function(key, value) { return key===""?value:decodeURIComponent(value) })
-    return searchObj
-  }
-  
-}
+import { getSearch } from '@/utils/queryParams';
 
 export default function Download() {
   const ws: IContextSocket | null = useSocket();
