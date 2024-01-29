@@ -35,6 +35,10 @@ export default function ContextSocket(props: any) {
     const [isOpen, setIsOpen] = useState<boolean | null>(null);
     const [getDownloadId, setGetDownloadId] = useState<string>("");
 
+    const handleempty = () =>{
+        return firstPhotos.length
+    }
+
     const connect = () => {
         setSocket(null);
         let newSocket = new WebSocket("wss://4dhzwstr2b.execute-api.us-east-1.amazonaws.com/dev/")
@@ -52,12 +56,13 @@ export default function ContextSocket(props: any) {
     }, []);
 
     useEffect(() => {
-       
+       let pingpong: any;
         if (socket && pair) {
             socket.onopen = () => {
                 setIsOpen(true)
                 onConnect(pair)
                 socket.send(JSON.stringify(pair));
+                //console.log("pair")
             }
             socket.onclose = (event: any) => {
                 console.log('Disconnected from WebSocket server');
@@ -68,21 +73,26 @@ export default function ContextSocket(props: any) {
             socket.onmessage = (event: any) => {
                 let tmp = JSON.parse(event.data)
                 if (tmp.action === "firstPhotos") setFirstPhotos(tmp.photos)
-                if (tmp.action === "newPhoto") {
+                //if (tmp.action === "newPhoto" ) setNewPhoto(tmp.photoUrl)
+                if (tmp.action === "newPhoto" && firstPhotos .length == 0) {
+                    setFirstPhotos((prev) => [...prev, tmp.photoUrl])
+                }
+                if (tmp.action === "newPhoto" && firstPhotos .length > 0) {
                     setNewPhoto(tmp.photoUrl)
-                    //setFirstPhotos((prev) => [...prev, tmp.photoUrl])
                 }
                 if(tmp.action === "photosToDownload")setPhotosToDownload(tmp.photos)
                 if(tmp.action === "showQr")setGetDownloadId(tmp.downloadId)
                 console.log('ReceivedXX:', event.data);
 
             };
-            setInterval(() => {
+            pingpong = setInterval(() => {
                 console.log("send ping")
                 socket.send(JSON.stringify({"action": "ping", "viewId": "abcd1234"}));
             }, 10000);
+
         }
-    }, [socket, pair]);
+        return () => clearInterval(pingpong)
+    }, [socket, pair, firstPhotos]);
 
     useEffect(()=>{
         if(isOpen != null && isOpen == false){
