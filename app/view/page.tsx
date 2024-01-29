@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import PhotoGallery from '@/components/PhotoGallery';
 import {useSocket, IContextSocket} from '../../contexts/socketContext'
+import ShowQr from '@/components/ShowQr';
 export const dynamic = "force-dynamic";
 
 const getSearch = ()=>{
@@ -15,10 +16,33 @@ const getSearch = ()=>{
   
 }
 
+interface IPhoto {
+  src: string;
+  isSelected: boolean;
+}
+
 export default function View() {
     
   const ws: IContextSocket | null = useSocket();
   const [id, setId] = useState(undefined)
+  const [selectedPhotos, setSelectedPhotos] =  useState<IPhoto[]>([]);
+  const [showDialogQr, setShowDialogQr] = useState<boolean>(false);
+
+  const closeDialog = () =>{
+    ws?.clearGetDownloadId()
+    setShowDialogQr(false)
+  }
+  const updateSelectedPhotos = (obj: IPhoto[])=>{
+    setSelectedPhotos(obj)
+  }
+
+  const createDownload = () =>{
+    
+    let arr = selectedPhotos.filter(item => item.isSelected).map(item => item.src);
+    ws?.createDownload(JSON.stringify({"action": "createDownload", "photos": arr}))
+    setShowDialogQr(true)
+    console.log(arr)
+  }
   
 
   useEffect(()=>{
@@ -32,13 +56,16 @@ export default function View() {
   },[id])
 
 
+
   useEffect(()=>{
     console.log(ws?.firstPhotos, "useEffect")
   }, [ws?.firstPhotos])
   return (
     <>
+    <ShowQr open={showDialogQr} closeDialog={closeDialog}/>
+    <button onClick={()=>{createDownload()}}>Download</button>
     {ws?.firstPhotos && ws?.firstPhotos.length!= 0 ? 
-      <PhotoGallery photos={ws.firstPhotos}/> 
+      <PhotoGallery photos={ws.firstPhotos} enableSelect={true} updateSelectedPhotos={updateSelectedPhotos}/> 
       : 
       <p>Esperando fotos</p>}
       

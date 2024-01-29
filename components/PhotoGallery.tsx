@@ -12,9 +12,11 @@ interface IPhoto{
   isSelected: boolean;
 }
 
-export default function PhotoGallery(props:{photos: string[]}) {
+
+
+export default function PhotoGallery(props:{photos: string[], enableSelect: boolean, updateSelectedPhotos?: (value: IPhoto[]) => void;}) {
   const ws: IContextSocket | null = useSocket();
-  const {photos} = props
+  const {photos, enableSelect, updateSelectedPhotos} = props
   const galleryObj= (photos: string[]) => {
     return photos.map(photo => {
       return {
@@ -35,6 +37,7 @@ export default function PhotoGallery(props:{photos: string[]}) {
       i === index ? { ...photo, isSelected: !photo.isSelected } : photo
     );
     setPhotosObj(nextPhoto);
+    if(updateSelectedPhotos)updateSelectedPhotos(nextPhoto)
   };
 
   const slides = photosObj.map(({ src } ) => ({
@@ -64,7 +67,7 @@ export default function PhotoGallery(props:{photos: string[]}) {
         onClick={handleClick}
         onSelect={handleSelect}
         enableLightbox = {true}
-        enableImageSelection={true} />
+        enableImageSelection={enableSelect} />
       <Lightbox
         slides={slides}
         open={index >= 0}

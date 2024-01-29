@@ -32,7 +32,7 @@ export default function Download() {
     return (
       <>
     {ws?.photosToDownload && ws?.photosToDownload.length!= 0 ? 
-      <PhotoGallery photos={ws.photosToDownload}/> 
+      <PhotoGallery photos={ws.photosToDownload} enableSelect = {false}/> 
       : 
       <p>Esperando fotos</p>}
       

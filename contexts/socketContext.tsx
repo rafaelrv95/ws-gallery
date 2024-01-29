@@ -14,6 +14,9 @@ export interface IContextSocket {
     clearNewPhoto: () => void;
     photosToDownload: string[];
     createDownload: (arg: {}) => void;
+    getDownloadId: string;
+    clearGetDownloadId: () => void;
+
 }
 
 const SocketIoContext = createContext<IContextSocket | null>(null);
@@ -30,6 +33,7 @@ export default function ContextSocket(props: any) {
     const [newPhoto, setNewPhoto] = useState<string>("");
     const [pair, setPair] = useState({})
     const [isOpen, setIsOpen] = useState<boolean | null>(null);
+    const [getDownloadId, setGetDownloadId] = useState<string>("");
 
     const connect = () => {
         setSocket(null);
@@ -69,10 +73,14 @@ export default function ContextSocket(props: any) {
                     //setFirstPhotos((prev) => [...prev, tmp.photoUrl])
                 }
                 if(tmp.action === "photosToDownload")setPhotosToDownload(tmp.photos)
-
+                if(tmp.action === "showQr")setGetDownloadId(tmp.downloadId)
                 console.log('ReceivedXX:', event.data);
 
             };
+            setInterval(() => {
+                console.log("send ping")
+                socket.send(JSON.stringify({"action": "ping", "viewId": "abcd1234"}));
+            }, 10000);
         }
     }, [socket, pair]);
 
@@ -99,6 +107,7 @@ export default function ContextSocket(props: any) {
     }
 
     const clearNewPhoto =()=>{setNewPhoto("")}
+    const clearGetDownloadId =()=>{setGetDownloadId("")}
 
 
     return (
@@ -111,7 +120,10 @@ export default function ContextSocket(props: any) {
                 newPhoto,
                 clearNewPhoto,
                 photosToDownload,
-                createDownload
+                createDownload,
+                getDownloadId,
+                clearGetDownloadId
+
             }}
         >
             {props.children}
