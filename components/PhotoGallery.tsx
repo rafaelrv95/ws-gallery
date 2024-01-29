@@ -7,10 +7,7 @@ import { Gallery } from 'react-grid-gallery';
 export const dynamic = "force-dynamic";
 import {useSocket, IContextSocket} from '../contexts/socketContext';
 
-interface IPhoto{
-  src: string;
-  isSelected: boolean;
-}
+import { IPhoto } from '@/interfaces/globalInterface';
 
 
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import PhotoGallery from '@/components/PhotoGallery';
 import {useSocket, IContextSocket} from '../../contexts/socketContext'
 import ShowQr from '@/components/ShowQr';
+import { IPhoto } from '@/interfaces/globalInterface';
 export const dynamic = "force-dynamic";
 
 const getSearch = ()=>{
@@ -14,11 +15,6 @@ const getSearch = ()=>{
     return searchObj
   }
   
-}
-
-interface IPhoto {
-  src: string;
-  isSelected: boolean;
 }
 
 export default function View() {
