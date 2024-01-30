@@ -33,7 +33,7 @@ export default function View() {
     let arr = selectedPhotos.filter(item => item.isSelected).map(item => item.src);
     ws?.createDownload(JSON.stringify({ "action": "createDownload", "photos": arr }))
     setShowDialogQr(true)
-    console.log(arr)
+    //console.log(arr)
   }
 
 
@@ -54,9 +54,6 @@ export default function View() {
   }
 
 
-  useEffect(() => {
-    console.log(ws?.firstPhotos, "useEffect")
-  }, [ws?.firstPhotos])
   return (
     <>
       {countSelected() != 0? 

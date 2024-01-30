@@ -83,11 +83,10 @@ export default function ContextSocket(props: any) {
                 }
                 if(tmp.action === "photosToDownload")setPhotosToDownload(tmp.photos)
                 if(tmp.action === "showQr")setGetDownloadId(tmp.downloadId)
-                console.log('ReceivedXX:', event.data);
+                //console.log('ReceivedXX:', event.data);
 
             };
             pingpong = setInterval(() => {
-                console.log("send ping")
                 socket.send(JSON.stringify({"action": "ping", "viewId": getSearch().viewId}));
             }, 10000);
 

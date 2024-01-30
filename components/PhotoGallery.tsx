@@ -43,7 +43,6 @@ export default function PhotoGallery(props: IPhotoGallery) {
         })
       });
     });
-    console.log(results)
     return results
   }
 
@@ -51,7 +50,6 @@ export default function PhotoGallery(props: IPhotoGallery) {
   const handleClick = (index: number) => setIndex(index);
   const [photosObj, setPhotosObj] = useState<IPhoto[]>([]);
   const handleSelect = (index: number) => {
-    console.log(index, 'selected')
     const nextPhoto = photosObj.map((photo, i) =>
       i === index ? { ...photo, isSelected: !photo.isSelected } : photo
     );
