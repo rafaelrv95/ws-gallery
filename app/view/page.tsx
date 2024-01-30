@@ -22,6 +22,7 @@ export default function View() {
     ws?.clearGetDownloadId()
     setIsClosed(true)
     setShowDialogQr(false)
+    setSelectedPhotos((prev: any)=>[...prev].map(p => ({ ...p, isSelected: false })))
   }
   const updateSelectedPhotos = (obj: IPhoto[]) => {
     setSelectedPhotos(obj)
