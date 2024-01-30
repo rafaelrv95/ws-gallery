@@ -2,60 +2,72 @@
 
 import { useEffect, useState } from 'react';
 import PhotoGallery from '@/components/PhotoGallery';
-import {useSocket, IContextSocket} from '../../contexts/socketContext'
+import { useSocket, IContextSocket } from '../../contexts/socketContext'
 import ShowQr from '@/components/ShowQr';
 import { IPhoto } from '@/interfaces/globalInterface';
 export const dynamic = "force-dynamic";
 import { getSearch } from '@/utils/queryParams';
+import { Fab } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/Download';
 
 export default function View() {
-    
+
   const ws: IContextSocket | null = useSocket();
   const [id, setId] = useState(undefined)
-  const [selectedPhotos, setSelectedPhotos] =  useState<IPhoto[]>([]);
+  const [selectedPhotos, setSelectedPhotos] = useState<IPhoto[]>([]);
   const [showDialogQr, setShowDialogQr] = useState<boolean>(false);
 
-  const closeDialog = () =>{
+  const closeDialog = () => {
     ws?.clearGetDownloadId()
     setShowDialogQr(false)
   }
-  const updateSelectedPhotos = (obj: IPhoto[])=>{
+  const updateSelectedPhotos = (obj: IPhoto[]) => {
     setSelectedPhotos(obj)
   }
 
-  const createDownload = () =>{
-    
+  const createDownload = () => {
+
     let arr = selectedPhotos.filter(item => item.isSelected).map(item => item.src);
-    ws?.createDownload(JSON.stringify({"action": "createDownload", "photos": arr}))
+    ws?.createDownload(JSON.stringify({ "action": "createDownload", "photos": arr }))
     setShowDialogQr(true)
     console.log(arr)
   }
-  
 
-  useEffect(()=>{
-    if(id != undefined){
+
+  useEffect(() => {
+    if (id != undefined) {
       const pair = { "action": "pair", "viewId": id }
       ws?.onConnect(pair)
-    }else{
+    } else {
       setId(getSearch().viewId)
     }
-    
-  },[id])
+
+  }, [id])
+
+  const countSelected = () => {
+    return selectedPhotos.reduce((count, obj: IPhoto) => {
+      return count + (obj.isSelected ? 1 : 0);
+    }, 0);
+  }
 
 
-
-  useEffect(()=>{
+  useEffect(() => {
     console.log(ws?.firstPhotos, "useEffect")
   }, [ws?.firstPhotos])
   return (
     <>
-    <ShowQr open={showDialogQr} closeDialog={closeDialog}/>
-    <button onClick={()=>{createDownload()}}>Download</button>
-    {ws?.firstPhotos && ws?.firstPhotos.length!= 0 ? 
-      <PhotoGallery photos={ws.firstPhotos} enableSelect={true} updateSelectedPhotos={updateSelectedPhotos}/> 
-      : 
-      <p>Esperando fotos</p>}
-      
+      {countSelected() != 0? 
+      <Fab onClick={() => { createDownload() }} style={{ position: "fixed", bottom: 0, right: 0, margin:10}} color="primary" aria-label="add">
+          <DownloadIcon />
+        </Fab>
+        :
+        <div></div>}
+      <ShowQr open={showDialogQr} closeDialog={closeDialog} />
+      {ws?.firstPhotos && ws?.firstPhotos.length != 0 ?
+        <PhotoGallery photos={ws.firstPhotos} enableSelect={true} updateSelectedPhotos={updateSelectedPhotos} />
+        :
+        <p>Esperando fotos</p>}
+
     </>
   );
 }
