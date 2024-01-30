@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useSocket, IContextSocket } from '../contexts/socketContext'
 import { DialogTitle, Dialog, DialogContent, DialogActions, Button } from "@mui/material";
 import { useQRCode } from "next-qrcode";
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 export interface SimpleDialogProps {
     open: boolean;
     closeDialog: () => void;
@@ -43,7 +45,9 @@ export default function ShowQr(props: SimpleDialogProps) {
                             />
                         </div>
                         :
-                        <p>CARGANDO</p>
+                        <Box sx={{ display: 'block' }}>
+                            <CircularProgress style={{margin: 10, height: 100, width: 100}} />
+                        </Box>
                     }
                 </DialogContent>
                 <DialogActions>
