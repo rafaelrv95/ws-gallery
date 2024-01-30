@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSocket, IContextSocket } from '../contexts/socketContext'
-import { DialogTitle, Dialog, DialogContent } from "@mui/material";
+import { DialogTitle, Dialog, DialogContent, DialogActions, Button } from "@mui/material";
 import { useQRCode } from "next-qrcode";
 export interface SimpleDialogProps {
     open: boolean;
@@ -28,7 +28,6 @@ export default function ShowQr(props: SimpleDialogProps) {
                 <DialogContent>
                     {ws?.getDownloadId != "" ?
                         <div>
-                            <p>{ws?.getDownloadId}</p>
                             <Canvas
                                 text={`${getBaseUrl()}/download?downloadId=${ws?.getDownloadId}`}
                                 options={{
@@ -47,6 +46,9 @@ export default function ShowQr(props: SimpleDialogProps) {
                         <p>CARGANDO</p>
                     }
                 </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeDialog}>Close</Button>
+                </DialogActions>
 
             </Dialog>
 
