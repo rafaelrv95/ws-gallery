@@ -51,7 +51,7 @@ export default function PhotoGallery(props:{photos: string[], enableSelect: bool
 
   useEffect(()=>{
     if(ws?.newPhoto != "" && ws?.newPhoto){
-      setPhotosObj((prev)=>[...prev, {src: ws?.newPhoto, isSelected: false}])
+      setPhotosObj((prev)=>[{src: ws?.newPhoto, isSelected: false}, ...prev])
       ws?.clearNewPhoto()
     }
   },[ws?.newPhoto])
