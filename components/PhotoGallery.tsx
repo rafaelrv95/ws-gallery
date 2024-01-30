@@ -10,6 +10,13 @@ import { useSocket, IContextSocket } from '../contexts/socketContext';
 import { IPhoto } from '@/interfaces/globalInterface';
 import { getSearch } from '@/utils/queryParams';
 
+interface IPhotoGallery{
+  photos: string[]; 
+  enableSelect: boolean; 
+  updateSelectedPhotos?: (value: IPhoto[]) => void;
+  isClosed?: boolean;
+  setIsClosed?: (args: any) => void;
+}
 
 const loadImage = (src: string) =>
   new Promise((resolve, reject) => {
@@ -19,9 +26,9 @@ const loadImage = (src: string) =>
     img.src = src;
   });
 
-export default function PhotoGallery(props: { photos: string[], enableSelect: boolean, updateSelectedPhotos?: (value: IPhoto[]) => void; }) {
+export default function PhotoGallery(props: IPhotoGallery) {
   const ws: IContextSocket | null = useSocket();
-  const { photos, enableSelect, updateSelectedPhotos } = props
+  const { photos, enableSelect, updateSelectedPhotos, isClosed, setIsClosed } = props
   const galleryObj = async (photos: string[]) => {
     let results: any = []
     await Promise.all(photos.map(loadImage)).then(images => {
@@ -80,9 +87,12 @@ export default function PhotoGallery(props: { photos: string[], enableSelect: bo
   }, [ws?.newPhoto])
 
   useEffect(()=>{
-    console.log(photosObj, "XXXXXXX")
-    //console.log(obtenerDimensiones("https://s3.amazonaws.com/photos.theojoproject.com/abcd1234/2024-01-30/2.png"))
-  },[photosObj])
+    if(isClosed && setIsClosed){
+      setPhotosObj((prev: any)=>[...prev].map(p => ({ ...p, isSelected: 0 })))
+      setIsClosed(false)
+    }
+    
+  },[isClosed])
 
   return (
     <>

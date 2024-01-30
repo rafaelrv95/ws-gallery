@@ -16,9 +16,11 @@ export default function View() {
   const [id, setId] = useState(undefined)
   const [selectedPhotos, setSelectedPhotos] = useState<IPhoto[]>([]);
   const [showDialogQr, setShowDialogQr] = useState<boolean>(false);
+  const [isClosed, setIsClosed] = useState<boolean>(false);
 
   const closeDialog = () => {
     ws?.clearGetDownloadId()
+    setIsClosed(true)
     setShowDialogQr(false)
   }
   const updateSelectedPhotos = (obj: IPhoto[]) => {
@@ -64,7 +66,7 @@ export default function View() {
         <div></div>}
       <ShowQr open={showDialogQr} closeDialog={closeDialog} />
       {ws?.firstPhotos && ws?.firstPhotos.length != 0 ?
-        <PhotoGallery photos={ws.firstPhotos} enableSelect={true} updateSelectedPhotos={updateSelectedPhotos} />
+        <PhotoGallery photos={ws.firstPhotos} enableSelect={true} updateSelectedPhotos={updateSelectedPhotos} isClosed={isClosed} setIsClosed={setIsClosed}/>
         :
         <p>Esperando fotos</p>}
 
