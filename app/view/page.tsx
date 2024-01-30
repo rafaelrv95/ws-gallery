@@ -9,6 +9,8 @@ export const dynamic = "force-dynamic";
 import { getSearch } from '@/utils/queryParams';
 import { Fab } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 
 export default function View() {
 
@@ -66,7 +68,10 @@ export default function View() {
       {ws?.firstPhotos && ws?.firstPhotos.length != 0 ?
         <PhotoGallery photos={ws.firstPhotos} enableSelect={true} updateSelectedPhotos={updateSelectedPhotos} isClosed={isClosed} setIsClosed={setIsClosed}/>
         :
-        <p>Esperando fotos</p>}
+        <Stack sx={{ width: '100%' }} spacing={2}>
+            <Alert severity="info">Waiting for photos</Alert>
+        </Stack>
+        }
 
     </>
   );
