@@ -5,16 +5,17 @@ import { Lightbox } from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { Gallery } from 'react-grid-gallery';
 export const dynamic = "force-dynamic";
-import {useSocket, IContextSocket} from '../contexts/socketContext';
+import { useSocket, IContextSocket } from '../contexts/socketContext';
 
 import { IPhoto } from '@/interfaces/globalInterface';
+import { getSearch } from '@/utils/queryParams';
 
 
 
-export default function PhotoGallery(props:{photos: string[], enableSelect: boolean, updateSelectedPhotos?: (value: IPhoto[]) => void;}) {
+export default function PhotoGallery(props: { photos: string[], enableSelect: boolean, updateSelectedPhotos?: (value: IPhoto[]) => void; }) {
   const ws: IContextSocket | null = useSocket();
-  const {photos, enableSelect, updateSelectedPhotos} = props
-  const galleryObj= (photos: string[]) => {
+  const { photos, enableSelect, updateSelectedPhotos } = props
+  const galleryObj = (photos: string[]) => {
     return photos.map(photo => {
       return {
         src: photo,
@@ -34,27 +35,27 @@ export default function PhotoGallery(props:{photos: string[], enableSelect: bool
       i === index ? { ...photo, isSelected: !photo.isSelected } : photo
     );
     setPhotosObj(nextPhoto);
-    if(updateSelectedPhotos)updateSelectedPhotos(nextPhoto)
+    if (updateSelectedPhotos) updateSelectedPhotos(nextPhoto)
   };
 
-  const slides = photosObj.map(({ src } ) => ({
+  const slides = photosObj.map(({ src }) => ({
     src: src,
   }));
 
-  useEffect(()=>{
-    if(photos.length ==0)return
-    if(photosObj.length == 0){
+  useEffect(() => {
+    if (photos.length == 0) return
+    if (photosObj.length == 0) {
       setPhotosObj(galleryObj(photos))
     }
-    
-  },[photos])
 
-  useEffect(()=>{
-    if(ws?.newPhoto != "" && ws?.newPhoto){
-      setPhotosObj((prev)=>[{src: ws?.newPhoto, isSelected: false}, ...prev])
+  }, [photos])
+
+  useEffect(() => {
+    if (ws?.newPhoto != "" && ws?.newPhoto) {
+      setPhotosObj((prev) => [{ src: ws?.newPhoto, isSelected: false }, ...prev])
       ws?.clearNewPhoto()
     }
-  },[ws?.newPhoto])
+  }, [ws?.newPhoto])
 
   return (
     <>
@@ -63,14 +64,15 @@ export default function PhotoGallery(props:{photos: string[], enableSelect: bool
         images={photosObj}
         onClick={handleClick}
         onSelect={handleSelect}
-        enableLightbox = {true}
+        enableLightbox={false}
         enableImageSelection={enableSelect} />
-      <Lightbox
-        slides={slides}
-        open={index >= 0}
-        index={index}
-        close={() => setIndex(-1)}
-      />
+      {!getSearch().hasOwnProperty("downloadId") ?
+        <Lightbox
+          slides={slides}
+          open={index >= 0}
+          index={index}
+          close={() => setIndex(-1)}
+        /> : <div></div>}
     </>
   );
 };
