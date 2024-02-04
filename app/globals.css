@@ -4,7 +4,6 @@ body {
   background-color: black;
   color: white;
   font-family: Arial, sans-serif;
-  position: relative;
 }
 .grid-gallery-item_check-button{
   visibility: visible !important;
@@ -13,13 +12,4 @@ body {
 [data-testid="grid-gallery-item_check-button"] {
   /* tus estilos personalizados aquí */
   visibility: visible !important;
-}
-
-.center{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 400px;
-  padding: 20px; 
 }

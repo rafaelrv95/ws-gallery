@@ -6,15 +6,6 @@ export default function Home() {
 
   return (
     <>
-    <div className="center">
-      <Image
-      id='logo'
-      src={projectLogo}
-      alt='The OjO project'
-      />
-    </div>
-      
-      
     </>
   );
 }
