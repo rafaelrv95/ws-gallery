@@ -119,14 +119,15 @@ export default function PhotoGallery(props: IPhotoGallery) {
   },[isClosed])
 
   return (
-    <>
+    <div style={{marginLeft:20, marginRight:20}}>
       <Gallery
         //@ts-ignore
         images={photosObj}
         onClick={handleClick}
         onSelect={handleSelect}
         enableLightbox={false}
-        enableImageSelection={enableSelect} />
+        enableImageSelection={enableSelect}
+         />
       {!getSearch().hasOwnProperty("downloadId") ?
         <Lightbox
           slides={slides}
@@ -134,6 +135,6 @@ export default function PhotoGallery(props: IPhotoGallery) {
           index={index}
           close={() => setIndex(-1)}
         /> : <div></div>}
-    </>
+    </div>
   );
 };
