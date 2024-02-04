@@ -47,7 +47,33 @@ export default function PhotoGallery(props: IPhotoGallery) {
   }
 
   const [index, setIndex] = useState(-1);
-  const handleClick = (index: number) => setIndex(index);
+  const handleClick = (index: number) => {
+    setIndex(index);
+    if(getSearch().hasOwnProperty("downloadId")){ 
+      
+      let image = photosObj[index].src
+      let i_name = image.split('/').slice(-1)[0]
+      let i_format = i_name.split('.').slice(-1)[0]
+      
+      fetch(image, {
+        method: 'GET',
+        mode: 'no-cors'
+      },)
+        .then(response => response.arrayBuffer())
+        .then(data => {
+          
+          const blob = new Blob([data], { type: `image/${i_format}` });
+          const link = document.createElement('a');
+          
+          link.href = URL.createObjectURL(blob);
+          link.download = i_name;
+          link.click();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  }
   const [photosObj, setPhotosObj] = useState<IPhoto[]>([]);
   const handleSelect = (index: number) => {
     const nextPhoto = photosObj.map((photo, i) =>
