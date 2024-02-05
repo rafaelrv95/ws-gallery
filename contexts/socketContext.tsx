@@ -42,7 +42,7 @@ export default function ContextSocket(props: any) {
 
     const connect = () => {
         setSocket(null);
-        let newSocket = new WebSocket("wss://4dhzwstr2b.execute-api.us-east-1.amazonaws.com/dev/")
+        let newSocket = new WebSocket("wss://ni6xiqkuv3.execute-api.eu-west-3.amazonaws.com/dev/")
         setSocket(newSocket)
         setIsOpen(null)
     }
