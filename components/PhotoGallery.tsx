@@ -57,7 +57,7 @@ export default function PhotoGallery(props: IPhotoGallery) {
       
       fetch(image, {
         method: 'GET',
-        mode: 'no-cors'
+        mode: 'cors'
       },)
         .then(response => response.arrayBuffer())
         .then(data => {
